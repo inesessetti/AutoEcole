@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo/webscript.png";
 import user from "../assets/user.jpg";
+import { CSSTransition } from "react-transition-group";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faBars
+} from "@fortawesome/free-solid-svg-icons";
+import cx from "classnames";
 
 import MenuItem from "./MenuItem";
 
@@ -54,6 +60,8 @@ export const menuItems = [
 ];
 
 const SideMenu = (props) => {
+    const [isOpen, setIsOpen] = useState(false);
+
     const [inactive, setInactive] = useState(false);
 
     useEffect(() => {
@@ -61,16 +69,17 @@ const SideMenu = (props) => {
 
 
 
-        
+
         if (inactive) {
             removeActiveClassFromSubMenu();
 
 
-          
+
         }
 
         props.onCollapse(inactive);
     }, [inactive]);
+
     const removeActiveClassFromSubMenu = () => {
         document.querySelectorAll(".sub-menu").forEach((el) => {
             el.classList.remove("active");
@@ -95,65 +104,79 @@ const SideMenu = (props) => {
 
     return (
 
-        <div className={`side-menu ${inactive ? "inactive" : ""}`}>
-           
-
-
-
-            <div className="top-section">
-                <div className="logo">
-                    <img src={logo} alt="webscript" />
-                </div>
-            
-
-
-                <div onClick={() => setInactive(!inactive)} className="toggle-menu-btn">
-                    {inactive ? (
-                        <i class="bi bi-arrow-right-square-fill"></i>
-                    ) : (
-                        <i class="bi bi-arrow-left-square-fill"></i>
-                    )}
-                </div>
+        <div className={cx("sidebar", { "sidebar-closed": !isOpen })}>
+            <div className={"sidebar__button"} onClick={() => setIsOpen(!isOpen)}>
+                <FontAwesomeIcon icon={faBars} />
             </div>
-           
-            <br />
-
-            <div className="divider"></div>
-
-            <div className="main-menu">
-                <ul>
-                    {menuItems.map((menuItem, index) => (
-                        <MenuItem
-                            key={index}
-                            name={menuItem.name}
-                            exact={menuItem.exact}
-                            to={menuItem.to}
-                            subMenus={menuItem.subMenus || []}
-                            iconClassName={menuItem.iconClassName}
-                            onClick={(e) => {
-                                if (inactive) {
-                                    setInactive(false);
-                                }
-                            }}
-                        />
-                    ))}
+            <CSSTransition
+                in={isOpen}
+                timeout={200}
+                classNames={"fade"}
+                unmountOnExit
+            >
 
 
-                </ul>
-            </div>
+                <div className={`side-menu ${inactive ? "inactive" : ""}`}>
 
-            <div className="side-menu-footer">
-                <div className="avatar">
-                    <img src={user} alt="user" />
+
+
+
+                    <div className="top-section">
+                        <div className="logo">
+                            <img src={logo} alt="webscript" />
+                        </div>
+
+
+
+                        <div onClick={() => setInactive(!inactive)} className="toggle-menu-btn">
+                            {inactive ? (
+                                <i class="bi bi-arrow-right-square-fill"></i>
+                            ) : (
+                                <i class="bi bi-arrow-left-square-fill"></i>
+                            )}
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div className="divider"></div>
+
+                    <div className="main-menu">
+                        <ul>
+                            {menuItems.map((menuItem, index) => (
+                                <MenuItem
+                                    key={index}
+                                    name={menuItem.name}
+                                    exact={menuItem.exact}
+                                    to={menuItem.to}
+                                    subMenus={menuItem.subMenus || []}
+                                    iconClassName={menuItem.iconClassName}
+                                    onClick={(e) => {
+                                        if (inactive) {
+                                            setInactive(false);
+                                        }
+                                    }}
+                                />
+                            ))}
+
+
+                        </ul>
+                    </div>
+
+                    <div className="side-menu-footer">
+                        <div className="avatar">
+                            <img src={user} alt="user" />
+                        </div>
+                        <div className="user-info">
+                            <h5>Ines Essetti</h5>
+                            <p>inesessetti99@gmail.com</p>
+                        </div>
+                    </div>
                 </div>
-                <div className="user-info">
-                    <h5>Ines Essetti</h5>
-                    <p>inesessetti99@gmail.com</p>
-                </div>
-            </div>
+
+
+            </CSSTransition>
         </div>
-
-
 
     );
 };
